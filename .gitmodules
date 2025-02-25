@@ -1,0 +1,3 @@
+[submodule "src/mimic-code"]
+	path = src/mimic-code
+	url = https://github.com/MIT-LCP/mimic-code.git

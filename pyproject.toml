@@ -1,0 +1,17 @@
+[project]
+name = "cs544"
+version = "0.1.0"
+description = "Work related to CS544 at Stevens"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jupyterlab>=4.3.5",
+    "matplotlib>=3.10.0",
+    "numpy>=2.2.3",
+    "pandas>=2.2.3",
+    "pq>=1.9.1",
+    "psycopg>=3.2.5",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy>=2.0.38",
+    "torch>=2.6.0",
+]
