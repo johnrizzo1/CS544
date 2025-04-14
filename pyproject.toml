@@ -11,7 +11,10 @@ dependencies = [
     "pandas>=2.2.3",
     "pq>=1.9.1",
     "psycopg>=3.2.5",
+    "py2neo>=2021.2.4",
     "python-dotenv>=1.0.1",
     "sqlalchemy>=2.0.38",
+    "tdqm>=0.0.1",
     "torch>=2.6.0",
+    "tqdm>=4.67.1",
 ]

@@ -1,0 +1,1 @@
+MATCH (n:ProcedureeventMv) RETURN COUNT(n) AS count

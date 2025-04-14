@@ -56,50 +56,6 @@
             ];
 
             services = {
-              # Backend service to perform inference on LLM models
-              ollama."ollama1" = {
-                enable = false;
-
-                # The models are usually huge, downloading them in every project
-                # directory can lead to a lot of duplication. Change here to a
-                # directory where the Ollama models can be stored and shared across
-                # projects.
-                dataDir = "${dataDirBase}/ollama1";
-
-                # Define the models to download when our app starts
-                #
-                # You can also initialize this to empty list, and download the
-                # models manually in the UI.
-                #
-                # Search for the models here: https://ollama.com/library
-                models = [ "phi3" ];
-              };
-
-              # Get ChatGPT like UI, but open-source, with Open WebUI
-              open-webui."open-webui1" = {
-                enable = true;
-                dataDir = "${dataDirBase}/open-webui1";
-                environment =
-                  let
-                    inherit (pc.config.services.ollama.ollama1) host port;
-                  in
-                  {
-                    OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
-                    WEBUI_AUTH = "False";
-                    # Not required since `WEBUI_AUTH=False`
-                    WEBUI_SECRET_KEY = "";
-                    # If `RAG_EMBEDDING_ENGINE != "ollama"` Open WebUI will use
-                    # [sentence-transformers](https://pypi.org/project/sentence-transformers/) to fetch the embedding models,
-                    # which would require `DEVICE_TYPE` to choose the device that performs the embedding.
-                    # If we rely on ollama instead, we can make use of [already documented configuration to use GPU acceleration](https://community.flake.parts/services-flake/ollama#acceleration).
-                    RAG_EMBEDDING_ENGINE = "ollama";
-                    RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
-                    # RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
-                    # RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
-                    # DEVICE_TYPE = "cpu";
-                  };
-              };
-
               postgres."pg1" = {
                 enable = true;
                 initialDatabases = [
@@ -125,39 +81,9 @@
                 '';
                 settings.shared_preload_libraries = "timescaledb";
               };
-
-              # mongodb."mongodb1".enable = true;
-
-              zookeeper."zookeeper1" = {
-                enable = false;
-                port = 2181;
-              };
-
-              apache-kafka."kafka1" = {
-                enable = false;
-                port = 9092;
-                settings = {
-                  "offsets.topic.replication.factor" = 1;
-                  "zookeeper.connect" = [ "localhost:2181" ];
-                };
-              };
             };
 
             settings.processes = {
-              # Start the Open WebUI service after the Ollama service has finished initializing and loading the models
-              # open-webui1.depends_on.ollama1-models.condition = "process_completed_successfully";
-              # Open the browser after the Open WebUI service has started
-              open-browser = {
-                command =
-                  let
-                    inherit (pc.config.services.open-webui.open-webui1) host port;
-                    opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
-                    url = "http://${host}:${toString port}";
-                  in
-                  "${opener} ${url}";
-                depends_on.open-webui1.condition = "process_healthy";
-              };
-
               pgweb =
                 let
                   pgcfg = pc.config.services.postgres.pg1;
@@ -178,8 +104,6 @@
                 };
                 depends_on."pg1".condition = "process_healthy";
               };
-
-              # kafka1.depends_on."zookeeper1".condition = "process_healthy";
             };
           };
 
@@ -231,6 +155,11 @@
           languages.python.venv.enable = true;
           languages.python.uv.enable = true;
           # languages.python.poetry.enable = true;
+          languages.javascript.enable = true;
+          languages.javascript.npm.enable = true;
+          languages.javascript.pnpm.enable = true;
+          languages.javascript.yarn.enable = true;
+          languages.typescript.enable = true;
 
           difftastic.enable = true;
           dotenv.enable = true;
