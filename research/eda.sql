@@ -39,19 +39,87 @@ SELECT de.icustay_id
     , de.valuenum
     -- , de.uom
     
-select de.*, ie.*, di.*
-from mimiciii.chartevents de
-	INNER join mimiciii.d_items di
-		ON de.itemid = di.itemid
-	INNER join mimiciii.icustays ie
-		ON de.icustay_id = ie.icustay_id
-WHERE de.subject_id in (
+select ce.*, ie.*, di.*, ad.*, p.*
+from mimiciii.chartevents ce
+	inner join mimiciii.d_items di
+		ON ce.itemid = di.itemid
+	inner join mimiciii.icustays ie
+		ON ce.icustay_id = ie.icustay_id
+	inner join mimiciii.admissions ad
+		on ce.hadm_id = ad.hadm_id
+	inner join mimiciii.patients p 
+		on ce.subject_id = p.subject_id
+where ce.subject_id in (
 	select a.subject_id
 	from mimiciii.admissions a
-	where a.diagnosis like '%TRANSPLANT%'
+	where a.diagnosis like E'%TRANSPLANT%'
 	order by a.subject_id asc
 )
-ORDER BY de.charttime;
+order by ce.charttime;
+
+select * from mimiciii.d_items di 
+
+select ce.*, ie.*, di.*, ad.*, p.*
+from mimiciii.chartevents ce
+	inner join mimiciii.d_items di
+		ON ce.itemid = di.itemid
+	inner join mimiciii.icustays ie
+		ON ce.icustay_id = ie.icustay_id
+	inner join mimiciii.admissions ad
+		on ce.hadm_id = ad.hadm_id
+	inner join mimiciii.patients p 
+		on ce.subject_id = p.subject_id
+where ce.subject_id in (
+	select a.subject_id
+	from mimiciii.admissions a
+	where a.diagnosis like '%%TRANSPLANT%%'
+	order by a.subject_id asc
+)
+order by di.label
+-- order by ce.charttime
+
+select di.label, count(di.label)
+from mimiciii.chartevents ce
+	inner join mimiciii.d_items di
+		ON ce.itemid = di.itemid
+	inner join mimiciii.icustays ie
+		ON ce.icustay_id = ie.icustay_id
+	inner join mimiciii.admissions ad
+		on ce.hadm_id = ad.hadm_id
+	inner join mimiciii.patients p 
+		on ce.subject_id = p.subject_id
+where ce.subject_id in (
+	select a.subject_id
+	from mimiciii.admissions a
+	where a.diagnosis like '%%TRANSPLANT%%'
+	order by a.subject_id asc
+)
+group by di.label
+
+select *
+from mimiciii.d_labitems
+
+select le.*, di.*
+from mimiciii.labevents le
+	inner join mimiciii.d_labitems di
+		on di.itemid = di.itemid
+where le.subject_id in (
+	select a.subject_id
+	from mimiciii.admissions a
+	where a.diagnosis like '%%TRANSPLANT%%'
+	order by a.subject_id asc
+)
+
+select * 
+from mimiciii.procedures_icd icd
+limit 100
+
+select count(*)
+from (select distinct(a.subject_id)
+		from mimiciii.admissions a
+		where a.diagnosis like '%%TRANSPLANT%%'
+		order by a.subject_id asc)
+
 
 select *
 from mimiciii.labevents
