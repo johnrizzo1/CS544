@@ -10,7 +10,7 @@ devenv.local.nix
 .direnv
 
 # Ignore the data
-data/
+data/mimic-iii-clinical-database-1.4/
 src/age-viewer/
 src/mimic-code/
 
